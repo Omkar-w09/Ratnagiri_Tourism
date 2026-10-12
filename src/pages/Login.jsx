@@ -9,52 +9,8 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    if (!email.trim() || !password) {
-      setError("Please enter your email and password.");
-      return;
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      // Connect your authentication API here.
-      // Example:
-      // const response = await fetch("/api/auth/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     email: email.trim(),
-      //     password,
-      //     rememberMe,
-      //   }),
-      // });
-      //
-      // if (!response.ok) throw new Error("Invalid email or password.");
-      // const data = await response.json();
-      // Navigate after successful authentication.
-
-      await new Promise((resolve) => setTimeout(resolve, 600));
-
-      setError(
-        "Login is not connected to a backend yet. Connect your authentication API to continue."
-      );
-    } catch (err) {
-      setError(err.message || "Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const container = {
     hidden: { opacity: 0 },
@@ -73,6 +29,67 @@ function Login() {
     },
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!email.trim() || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Connect your backend authentication API here.
+      // Example:
+      // const response = await fetch("/api/auth/login", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     email: email.trim(),
+      //     password,
+      //     rememberMe,
+      //   }),
+      // });
+      //
+      // if (!response.ok) throw new Error("Invalid email or password.");
+      // const data = await response.json();
+      // Navigate after successful authentication.
+
+      await new Promise((resolve) => setTimeout(resolve, 600));
+
+      setError(
+        "Authentication is not connected yet. Connect your backend API to sign in."
+      );
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setError("");
+    setGoogleLoading(true);
+
+    try {
+      // Connect Firebase Authentication or Google OAuth here.
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      setError(
+        "Google sign-in is not configured yet. Connect your Google OAuth provider to continue."
+      );
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
   return (
     <main className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-[#07111e] px-4 py-8 text-white sm:px-6">
       {/* Cinematic background */}
@@ -87,11 +104,11 @@ function Login() {
         transition={{ duration: 2.5, ease: "easeOut" }}
       />
 
-      {/* Dark cinematic overlays */}
+      {/* Background overlays */}
       <div className="absolute inset-0 -z-10 bg-[#07111e]/75" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/80 via-transparent to-orange-950/40" />
 
-      {/* Animated glow */}
+      {/* Animated orange glow */}
       <motion.div
         className="pointer-events-none absolute -left-24 top-10 -z-10 h-80 w-80 rounded-full bg-orange-500/20 blur-[110px]"
         animate={{
@@ -106,6 +123,7 @@ function Login() {
         }}
       />
 
+      {/* Animated cyan glow */}
       <motion.div
         className="pointer-events-none absolute -bottom-20 -right-20 -z-10 h-96 w-96 rounded-full bg-cyan-500/15 blur-[120px]"
         animate={{
@@ -120,7 +138,7 @@ function Login() {
         }}
       />
 
-      {/* Main glass card */}
+      {/* Main card */}
       <motion.div
         initial={{ opacity: 0, y: 35, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -128,7 +146,7 @@ function Login() {
         className="relative grid w-full max-w-6xl overflow-hidden rounded-[2rem] border border-white/15 bg-white/[0.05] shadow-[0_30px_100px_rgba(0,0,0,0.5)] backdrop-blur-2xl lg:grid-cols-2"
       >
         {/* Left branding panel */}
-        <section className="relative hidden min-h-[700px] flex-col justify-between overflow-hidden border-r border-white/10 p-10 lg:flex xl:p-14">
+        <section className="relative hidden min-h-[720px] flex-col justify-between overflow-hidden border-r border-white/10 p-10 lg:flex xl:p-14">
           <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-cyan-500/10" />
 
           <motion.div
@@ -142,6 +160,7 @@ function Login() {
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-orange-400/40 bg-orange-500/15 text-2xl text-orange-400">
                   ✦
                 </span>
+
                 <span className="text-xl font-black tracking-tight">
                   Ratnagiri{" "}
                   <span className="text-orange-400">Tourism</span>
@@ -186,17 +205,22 @@ function Login() {
               Your next adventure begins with us.
             </motion.p>
 
-            <motion.div variants={item} className="mt-9 flex flex-wrap gap-3">
-              {["Beautiful beaches", "Historic forts", "Konkan culture"].map(
-                (feature) => (
-                  <span
-                    key={feature}
-                    className="rounded-full border border-white/15 bg-black/20 px-4 py-2 text-xs text-slate-200 transition hover:border-orange-400/60 hover:bg-orange-500/10"
-                  >
-                    {feature}
-                  </span>
-                )
-              )}
+            <motion.div
+              variants={item}
+              className="mt-9 flex flex-wrap gap-3"
+            >
+              {[
+                "Beautiful beaches",
+                "Historic forts",
+                "Konkan culture",
+              ].map((feature) => (
+                <span
+                  key={feature}
+                  className="rounded-full border border-white/15 bg-black/20 px-4 py-2 text-xs text-slate-200 transition hover:border-orange-400/60 hover:bg-orange-500/10"
+                >
+                  {feature}
+                </span>
+              ))}
             </motion.div>
           </motion.div>
 
@@ -214,12 +238,13 @@ function Login() {
             initial="hidden"
             animate="visible"
           >
-            {/* Mobile logo */}
+            {/* Mobile branding */}
             <motion.div variants={item} className="mb-9 lg:hidden">
               <Link to="/" className="inline-flex items-center gap-3">
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-500/15 text-2xl text-orange-400">
                   ✦
                 </span>
+
                 <span className="text-lg font-black">
                   Ratnagiri{" "}
                   <span className="text-orange-400">Tourism</span>
@@ -227,6 +252,7 @@ function Login() {
               </Link>
             </motion.div>
 
+            {/* Heading */}
             <motion.div variants={item} className="mb-8">
               <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-orange-400">
                 Welcome back
@@ -242,7 +268,7 @@ function Login() {
             </motion.div>
 
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-              {/* Email field */}
+              {/* Email */}
               <motion.div variants={item}>
                 <label
                   htmlFor="email"
@@ -281,7 +307,7 @@ function Login() {
                 </div>
               </motion.div>
 
-              {/* Password field */}
+              {/* Password */}
               <motion.div variants={item}>
                 <div className="mb-2 flex items-center justify-between gap-3">
                   <label
@@ -331,7 +357,9 @@ function Login() {
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                     aria-pressed={showPassword}
                     className="shrink-0 rounded-lg p-1 text-slate-400 transition hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
                   >
@@ -396,13 +424,13 @@ function Login() {
                 )}
               </AnimatePresence>
 
-              {/* Sign in button */}
+              {/* Sign In */}
               <motion.div variants={item} className="pt-2">
                 <motion.button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || googleLoading}
                   whileHover={{ scale: loading ? 1 : 1.015, y: -2 }}
-                  whileTap={{ scale: loading ? 1 : 0.985 }}
+                  whileTap={{ scale: 0.985 }}
                   className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-xl bg-gradient-to-r from-orange-500 via-orange-500 to-amber-500 px-5 py-4 text-sm font-bold text-white shadow-[0_8px_30px_rgba(249,115,22,0.22)] transition-shadow hover:shadow-[0_12px_35px_rgba(249,115,22,0.35)] disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
@@ -414,18 +442,69 @@ function Login() {
                   {loading ? (
                     <span className="relative h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                   ) : (
-                    <motion.span
-                      className="relative text-lg"
-                      whileHover={{ x: 4 }}
-                    >
-                      →
-                    </motion.span>
+                    <span className="relative text-lg">→</span>
                   )}
+                </motion.button>
+              </motion.div>
+
+              {/* Divider */}
+              <motion.div
+                variants={item}
+                className="flex items-center gap-4 py-1"
+              >
+                <div className="h-px flex-1 bg-white/10" />
+                <span className="text-[10px] font-semibold tracking-[0.2em] text-slate-500">
+                  OR CONTINUE WITH
+                </span>
+                <div className="h-px flex-1 bg-white/10" />
+              </motion.div>
+
+              {/* Google Sign In */}
+              <motion.div variants={item}>
+                <motion.button
+                  type="button"
+                  disabled={loading || googleLoading}
+                  onClick={handleGoogleLogin}
+                  whileHover={{ scale: 1.015, y: -2 }}
+                  whileTap={{ scale: 0.985 }}
+                  className="flex w-full items-center justify-center gap-3 rounded-xl border border-white/15 bg-white/[0.05] px-5 py-3.5 text-sm font-semibold text-white transition hover:border-white/30 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {googleLoading ? (
+                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 48 48"
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill="#FFC107"
+                        d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.9-3.6 6.1-8.9 6.1-15Z"
+                      />
+                      <path
+                        fill="#4CAF50"
+                        d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.6-5.1c-1.8 1.2-4.1 2-6.9 2-5.3 0-9.8-3.6-11.4-8.4H5.8v5.3C9.2 39.5 16 44 24 44Z"
+                      />
+                      <path
+                        fill="#1976D2"
+                        d="M12.6 27.6a12 12 0 0 1 0-7.2v-5.3H5.8a20 20 0 0 0 0 17.8l6.8-5.3Z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M24 12c3 0 5.7 1 7.8 3.1l5.8-5.8C34.1 6.1 29.5 4 24 4 16 4 9.2 8.5 5.8 15.1l6.8 5.3C14.2 15.6 18.7 12 24 12Z"
+                      />
+                    </svg>
+                  )}
+
+                  {googleLoading
+                    ? "Connecting to Google..."
+                    : "Continue with Google"}
                 </motion.button>
               </motion.div>
             </form>
 
-            {/* Signup */}
+            {/* Create account */}
             <motion.p
               variants={item}
               className="mt-8 text-center text-sm text-slate-400"
@@ -439,7 +518,7 @@ function Login() {
               </Link>
             </motion.p>
 
-            {/* Home link */}
+            {/* Return home */}
             <motion.div
               variants={item}
               className="mt-7 border-t border-white/10 pt-6 text-center"
