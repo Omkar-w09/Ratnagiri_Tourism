@@ -1,201 +1,468 @@
+
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!email.trim() || !password) {
+      setError("Please enter your email and password.");
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Connect your authentication API here.
+      // Example:
+      // const response = await fetch("/api/auth/login", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     email: email.trim(),
+      //     password,
+      //     rememberMe,
+      //   }),
+      // });
+      //
+      // if (!response.ok) throw new Error("Invalid email or password.");
+      // const data = await response.json();
+      // Navigate after successful authentication.
+
+      await new Promise((resolve) => setTimeout(resolve, 600));
+
+      setError(
+        "Login is not connected to a backend yet. Connect your authentication API to continue."
+      );
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const container = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.12 },
+    },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 22 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.55, ease: "easeOut" },
+    },
+  };
+
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4">
-      {/* Background image */}
+    <main className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-[#07111e] px-4 py-8 text-white sm:px-6">
+      {/* Cinematic background */}
       <motion.div
-        className="absolute inset-0 bg-cover bg-center"
+        className="absolute inset-0 -z-20 bg-cover bg-center"
         style={{
           backgroundImage:
             "url('https://images.pexels.com/photos/16354184/pexels-photo-16354184.jpeg')",
         }}
         initial={{ scale: 1.15 }}
         animate={{ scale: 1 }}
-        transition={{ duration: 2, ease: "easeOut" }}
+        transition={{ duration: 2.5, ease: "easeOut" }}
       />
 
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-slate-950/75 backdrop-blur-[2px]" />
+      {/* Dark cinematic overlays */}
+      <div className="absolute inset-0 -z-10 bg-[#07111e]/75" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/80 via-transparent to-orange-950/40" />
 
-      {/* Animated background circles */}
+      {/* Animated glow */}
       <motion.div
-        className="absolute left-10 top-20 h-40 w-40 rounded-full bg-orange-500/20 blur-3xl"
+        className="pointer-events-none absolute -left-24 top-10 -z-10 h-80 w-80 rounded-full bg-orange-500/20 blur-[110px]"
         animate={{
-          x: [0, 40, 0],
+          x: [0, 45, 0],
           y: [0, 30, 0],
           scale: [1, 1.2, 1],
         }}
         transition={{
-          duration: 7,
+          duration: 9,
           repeat: Infinity,
           ease: "easeInOut",
         }}
       />
 
       <motion.div
-        className="absolute bottom-20 right-10 h-52 w-52 rounded-full bg-blue-500/20 blur-3xl"
+        className="pointer-events-none absolute -bottom-20 -right-20 -z-10 h-96 w-96 rounded-full bg-cyan-500/15 blur-[120px]"
         animate={{
-          x: [0, -40, 0],
-          y: [0, -30, 0],
-          scale: [1.1, 1, 1.1],
+          x: [0, -35, 0],
+          y: [0, -25, 0],
+          scale: [1, 1.15, 1],
         }}
         transition={{
-          duration: 8,
+          duration: 11,
           repeat: Infinity,
           ease: "easeInOut",
         }}
       />
 
-      {/* Login card */}
+      {/* Main glass card */}
       <motion.div
-        className="relative z-10 w-full max-w-md rounded-3xl border border-white/15 bg-white/10 p-7 text-white shadow-2xl backdrop-blur-xl sm:p-10"
-        initial={{
-          opacity: 0,
-          y: 70,
-          scale: 0.9,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-          scale: 1,
-        }}
-        transition={{
-          duration: 0.8,
-          ease: "easeOut",
-        }}
+        initial={{ opacity: 0, y: 35, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="relative grid w-full max-w-6xl overflow-hidden rounded-[2rem] border border-white/15 bg-white/[0.05] shadow-[0_30px_100px_rgba(0,0,0,0.5)] backdrop-blur-2xl lg:grid-cols-2"
       >
-        {/* Logo */}
-        <motion.div
-          className="mb-7 text-center"
-          initial={{ opacity: 0, y: -25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-        >
-          <Link to="/">
-            <h1 className="text-2xl font-black">
-              Ratnagiri{" "}
-              <span className="text-orange-500">Tourism</span>
-            </h1>
-          </Link>
+        {/* Left branding panel */}
+        <section className="relative hidden min-h-[700px] flex-col justify-between overflow-hidden border-r border-white/10 p-10 lg:flex xl:p-14">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-cyan-500/10" />
 
-          <h2 className="mt-5 text-3xl font-bold">Welcome Back</h2>
-
-          <p className="mt-2 text-sm text-slate-300">
-            Sign in to continue exploring Ratnagiri.
-          </p>
-        </motion.div>
-
-        <form className="space-y-5">
-          {/* Email */}
           <motion.div
-            initial={{ opacity: 0, x: -35 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.45, duration: 0.6 }}
+            className="relative z-10"
+            variants={container}
+            initial="hidden"
+            animate="visible"
           >
-            <label className="mb-2 block text-sm font-semibold">
-              Email Address
-            </label>
-
-            <motion.input
-              whileFocus={{ scale: 1.02 }}
-              type="email"
-              placeholder="Enter your email"
-              required
-              className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30"
-            />
+            <motion.div variants={item}>
+              <Link to="/" className="inline-flex items-center gap-3">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-orange-400/40 bg-orange-500/15 text-2xl text-orange-400">
+                  ✦
+                </span>
+                <span className="text-xl font-black tracking-tight">
+                  Ratnagiri{" "}
+                  <span className="text-orange-400">Tourism</span>
+                </span>
+              </Link>
+            </motion.div>
           </motion.div>
 
-          {/* Password */}
           <motion.div
-            initial={{ opacity: 0, x: 35 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
+            className="relative z-10 max-w-lg"
+            variants={container}
+            initial="hidden"
+            animate="visible"
           >
-            <label className="mb-2 block text-sm font-semibold">
-              Password
-            </label>
-
-            <motion.input
-              whileFocus={{ scale: 1.02 }}
-              type="password"
-              placeholder="Enter your password"
-              required
-              className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-white outline-none transition placeholder:text-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/30"
-            />
-          </motion.div>
-
-          {/* Remember and forgot password */}
-          <motion.div
-            className="flex items-center justify-between text-xs"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.75, duration: 0.6 }}
-          >
-            <label className="flex cursor-pointer items-center gap-2">
-              <input type="checkbox" className="accent-orange-500" />
-              Remember me
-            </label>
-
-            <button
-              type="button"
-              className="text-orange-400 hover:text-orange-300"
+            <motion.div
+              variants={item}
+              className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold tracking-widest text-orange-200"
             >
-              Forgot password?
-            </button>
+              <span className="h-2 w-2 animate-pulse rounded-full bg-orange-400" />
+              DISCOVER THE KONKAN COAST
+            </motion.div>
+
+            <motion.h1
+              variants={item}
+              className="text-5xl font-black leading-[1.08] tracking-tight xl:text-6xl"
+            >
+              Every journey
+              <br />
+              tells a story.
+              <br />
+              <span className="bg-gradient-to-r from-orange-300 via-orange-400 to-yellow-200 bg-clip-text text-transparent">
+                Yours starts here.
+              </span>
+            </motion.h1>
+
+            <motion.p
+              variants={item}
+              className="mt-6 max-w-md text-base leading-7 text-slate-300"
+            >
+              Discover beautiful beaches, historic forts, lush green
+              landscapes, and the unforgettable charm of Ratnagiri.
+              Your next adventure begins with us.
+            </motion.p>
+
+            <motion.div variants={item} className="mt-9 flex flex-wrap gap-3">
+              {["Beautiful beaches", "Historic forts", "Konkan culture"].map(
+                (feature) => (
+                  <span
+                    key={feature}
+                    className="rounded-full border border-white/15 bg-black/20 px-4 py-2 text-xs text-slate-200 transition hover:border-orange-400/60 hover:bg-orange-500/10"
+                  >
+                    {feature}
+                  </span>
+                )
+              )}
+            </motion.div>
           </motion.div>
 
-          {/* Login button */}
-          <motion.button
-            type="submit"
-            className="w-full rounded-xl bg-orange-500 py-3 font-bold text-white shadow-lg shadow-orange-950/30 hover:bg-orange-600"
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.85, duration: 0.6 }}
-            whileHover={{
-              scale: 1.04,
-              y: -3,
-            }}
-            whileTap={{
-              scale: 0.96,
-            }}
-          >
-            Sign In
-          </motion.button>
-        </form>
+          <div className="relative z-10 flex items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-slate-400">
+            <span>Discover more. Travel better.</span>
+            <span>Ratnagiri, Maharashtra</span>
+          </div>
+        </section>
 
-        {/* Signup link */}
-        <motion.p
-          className="mt-7 text-center text-sm text-slate-300"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.6 }}
-        >
-          Don&apos;t have an account?{" "}
-          <Link
-            to="/signup"
-            className="font-bold text-orange-400 hover:text-orange-300"
+        {/* Right login panel */}
+        <section className="flex items-center justify-center p-6 sm:p-10 lg:p-12 xl:p-16">
+          <motion.div
+            className="w-full max-w-md"
+            variants={container}
+            initial="hidden"
+            animate="visible"
           >
-            Create Account
-          </Link>
-        </motion.p>
+            {/* Mobile logo */}
+            <motion.div variants={item} className="mb-9 lg:hidden">
+              <Link to="/" className="inline-flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-500/15 text-2xl text-orange-400">
+                  ✦
+                </span>
+                <span className="text-lg font-black">
+                  Ratnagiri{" "}
+                  <span className="text-orange-400">Tourism</span>
+                </span>
+              </Link>
+            </motion.div>
 
-        <motion.div
-          className="mt-5 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.1 }}
-        >
-          <Link
-            to="/"
-            className="text-xs text-slate-400 transition hover:text-white"
-          >
-            ← Return to Home
-          </Link>
-        </motion.div>
+            <motion.div variants={item} className="mb-8">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-orange-400">
+                Welcome back
+              </p>
+
+              <h2 className="text-4xl font-black tracking-tight sm:text-5xl">
+                Sign in<span className="text-orange-400">.</span>
+              </h2>
+
+              <p className="mt-3 text-sm leading-6 text-slate-400">
+                Sign in to continue exploring Ratnagiri.
+              </p>
+            </motion.div>
+
+            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+              {/* Email field */}
+              <motion.div variants={item}>
+                <label
+                  htmlFor="email"
+                  className="mb-2 block text-sm font-semibold text-slate-200"
+                >
+                  Email address
+                </label>
+
+                <div className="group flex items-center gap-3 rounded-xl border border-white/15 bg-white/[0.04] px-4 transition duration-300 focus-within:border-orange-400 focus-within:bg-white/[0.07] focus-within:ring-4 focus-within:ring-orange-500/10">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    className="h-5 w-5 shrink-0 text-slate-500 group-focus-within:text-orange-400"
+                    aria-hidden="true"
+                  >
+                    <rect x="3" y="5" width="18" height="14" rx="3" />
+                    <path d="m4 7 8 6 8-6" />
+                  </svg>
+
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setError("");
+                    }}
+                    required
+                    className="min-w-0 w-full bg-transparent py-4 text-sm text-white outline-none placeholder:text-slate-500"
+                  />
+                </div>
+              </motion.div>
+
+              {/* Password field */}
+              <motion.div variants={item}>
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <label
+                    htmlFor="password"
+                    className="text-sm font-semibold text-slate-200"
+                  >
+                    Password
+                  </label>
+
+                  <Link
+                    to="/forgot-password"
+                    className="text-xs font-semibold text-orange-400 transition hover:text-orange-300"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+
+                <div className="group flex items-center gap-3 rounded-xl border border-white/15 bg-white/[0.04] px-4 transition duration-300 focus-within:border-orange-400 focus-within:bg-white/[0.07] focus-within:ring-4 focus-within:ring-orange-500/10">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    className="h-5 w-5 shrink-0 text-slate-500 group-focus-within:text-orange-400"
+                    aria-hidden="true"
+                  >
+                    <rect x="4" y="10" width="16" height="11" rx="3" />
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                    <path d="M12 14v3" />
+                  </svg>
+
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setError("");
+                    }}
+                    required
+                    className="min-w-0 w-full bg-transparent py-4 text-sm text-white outline-none placeholder:text-slate-500"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
+                    className="shrink-0 rounded-lg p-1 text-slate-400 transition hover:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  >
+                    {showPassword ? (
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.7"
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                      >
+                        <path d="M3 3l18 18" />
+                        <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                        <path d="M9.9 5.2A11 11 0 0 1 12 5c5.5 0 9 7 9 7a15 15 0 0 1-3.1 3.9" />
+                        <path d="M6.2 6.2C3.9 7.8 2 12 2 12s3.5 7 10 7a10 10 0 0 0 4-.8" />
+                      </svg>
+                    ) : (
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.7"
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                      >
+                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Remember me */}
+              <motion.label
+                variants={item}
+                className="flex w-fit cursor-pointer items-center gap-3 text-sm text-slate-400"
+              >
+                <input
+                  type="checkbox"
+                  name="rememberMe"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-4 w-4 cursor-pointer rounded accent-orange-500"
+                />
+                Remember me
+              </motion.label>
+
+              {/* Error message */}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    role="alert"
+                    initial={{ opacity: 0, height: 0, y: -5 }}
+                    animate={{ opacity: 1, height: "auto", y: 0 }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="overflow-hidden rounded-xl border border-orange-400/20 bg-orange-400/10 px-4 py-3 text-sm leading-6 text-orange-200"
+                  >
+                    {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Sign in button */}
+              <motion.div variants={item} className="pt-2">
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  whileHover={{ scale: loading ? 1 : 1.015, y: -2 }}
+                  whileTap={{ scale: loading ? 1 : 0.985 }}
+                  className="group relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-xl bg-gradient-to-r from-orange-500 via-orange-500 to-amber-500 px-5 py-4 text-sm font-bold text-white shadow-[0_8px_30px_rgba(249,115,22,0.22)] transition-shadow hover:shadow-[0_12px_35px_rgba(249,115,22,0.35)] disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+
+                  <span className="relative">
+                    {loading ? "Signing you in..." : "Sign In"}
+                  </span>
+
+                  {loading ? (
+                    <span className="relative h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  ) : (
+                    <motion.span
+                      className="relative text-lg"
+                      whileHover={{ x: 4 }}
+                    >
+                      →
+                    </motion.span>
+                  )}
+                </motion.button>
+              </motion.div>
+            </form>
+
+            {/* Signup */}
+            <motion.p
+              variants={item}
+              className="mt-8 text-center text-sm text-slate-400"
+            >
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="font-bold text-orange-400 transition hover:text-orange-300"
+              >
+                Create account
+              </Link>
+            </motion.p>
+
+            {/* Home link */}
+            <motion.div
+              variants={item}
+              className="mt-7 border-t border-white/10 pt-6 text-center"
+            >
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 text-xs font-medium text-slate-500 transition hover:text-white"
+              >
+                <span aria-hidden="true">←</span>
+                Back to homepage
+              </Link>
+            </motion.div>
+
+            <motion.p
+              variants={item}
+              className="mt-8 text-center text-[10px] leading-5 tracking-[0.18em] text-slate-600"
+            >
+              EXPLORE RATNAGIRI · EXPERIENCE KONKAN
+            </motion.p>
+          </motion.div>
+        </section>
       </motion.div>
-    </div>
+    </main>
   );
 }
 
